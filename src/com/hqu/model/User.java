@@ -1,7 +1,6 @@
 package com.hqu.model;
 
 import java.sql.Date;
-
 public class User {
 	private int id;
 	private String username;
