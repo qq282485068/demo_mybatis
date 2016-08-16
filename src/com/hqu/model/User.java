@@ -1,6 +1,7 @@
 package com.hqu.model;
 
 import java.sql.Date;
+
 public class User {
 	private int id;
 	private String username;
@@ -68,9 +69,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", sex=" + sex
-				+ ", birthday=" + birthday + ", address=" + address
-				+ ", detail=" + detail + ", score=" + score + "]";
+		return "User [id=" + id + ", username=" + username + ", sex=" + sex + ", birthday=" + birthday + ", address="
+				+ address + ", detail=" + detail + ", score=" + score + "]";
 	}
 
 }
