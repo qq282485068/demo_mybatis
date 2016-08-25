@@ -4,8 +4,16 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
-	<properties resource="jdbc.properties" /> 
+	<!-- 属性循序必须是
+	properties?,settings?,typeAliases?,typeHandlers?,objectFactory?,objectWrapperFactory?,plugins?,environments?,databaseIdProvider?,mappers? -->
+	
+	<properties resource="jdbc.properties" />
 
+	<!-- 设置实体类别名 -->
+	<typeAliases>
+		<typeAlias alias="User" type="com.hqu.model.User" />
+	</typeAliases>
+	
 	<!-- 和spring整合后environments配置将废除 -->
 	<environments default="development">
 		<environment id="development">
@@ -31,5 +39,5 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	<mappers>
 		<mapper resource="com/hqu/mapper/UserMapper.xml" />
 	</mappers>
-
+	
 </configuration>

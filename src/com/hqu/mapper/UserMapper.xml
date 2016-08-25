@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		parmeterType:指向sql（向statement中）中传入参数的类型
 		#{}：表示一个点位符，{}中的id表示传入变量名，当传入单个值{}中的变量可以随意
 		resultType：将sql查询结果集映射成java对象的类型 -->
-	<select id="findUserByName" parameterType="com.hqu.model.User" resultType="com.hqu.model.User">
+	<select id="findUserByName" parameterType="User" resultType="User">
 		SELECT * FROM User 
 		WHERE 1= 1
 		<if test="username != null or birthday != null">
@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 	</select>
 
-	<insert id="insertUser" parameterType="com.hqu.model.User">
+	<insert id="insertUser" parameterType="User">
 		INSERT INTO
 		user(username,birthday,sex,address,detail,score)
 		VALUES (#{username},#{birthday},#{sex},#{address},#{detail},#{score})
@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		DELETE FROM User WHERE id = #{id}
 	</delete>
 	
-	<update id="testUpdateUserById" parameterType="com.hqu.model.User" >
+	<update id="testUpdateUserById" parameterType="User" >
 		UPDATE User SET username = #{username}, sex = #{sex} WHERE id = #{id}
 	</update>
 	
