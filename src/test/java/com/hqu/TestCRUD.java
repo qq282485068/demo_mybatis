@@ -2,6 +2,7 @@ package com.hqu;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -67,6 +68,26 @@ public class TestCRUD {
 		
 		int insertResult = sqlSession.insert("UserMapper.insertUsers", users);
 		System.out.println("insertResult = " + insertResult);
+	}
+	
+	@Test
+	public void testInsertUsersMax() {
+		List<User> users = new ArrayList<>();
+		User user = null;
+		for(int i = 0; i<100000; i ++){
+			user = new User();
+			user.setUsername("jerome" + i);
+			user.setSex("boy");
+			user.setAddress("深圳");
+			user.setScore(i);
+			users.add(user);
+		}
+		
+		System.out.println("start insert ... ");
+		long currtTime = new Date().getTime();
+		int insertResult = sqlSession.insert("UserMapper.insertUsers", users);
+		System.out.println("insertResult = " + insertResult);
+		System.out.println("use time = " + (new Date().getTime() - currtTime));
 	}
 	
 	@Test
@@ -139,6 +160,5 @@ public class TestCRUD {
 			System.out.println("user.toString() = " + user.toString());
 		}
 	}
-
 	
 }
