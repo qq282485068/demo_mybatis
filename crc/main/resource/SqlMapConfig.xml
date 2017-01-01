@@ -37,7 +37,8 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 
 	<!-- 加载映射文件 -->
 	<mappers>
-		<mapper resource="com/hqu/mapper/UserMapper.xml" />
+		<!-- <mapper resource="com/hqu/mapper/UserMapper.xml" /> -->
+		<mapper resource="mapper/UserMapper.xml" />
 	</mappers>
 	
 </configuration>

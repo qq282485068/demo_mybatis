@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO t_user (
+		   user_name,
+		   age,
+		   sex,
+		   birthday,
+		   score,
+		   create_time
+		)
+		VALUES
+		(
+		   #{user_name},
+		   #{age},
+		   #{sex.key},
+		   #{birthday},
+		   #{score},
+		   NOW()
+		) 
+		<!-- 返回插入的ID -->
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+	</insert>
+	
+	<!-- 批量插入 -->
+	<insert id="insertUsers" parameterType="list">
+		INSERT INTO t_user (
+			user_name,
+			age,
+			sex,
+			birthday,
+			score,
+			create_time
+		)
+		VALUES
+		<foreach collection="list" item="itm" index="index" separator=",">
+		(
+			#{itm.user_name}, 
+			#{itm.age},
+			#{itm.sex.key},
+			#{itm.birthday},
+			#{itm.score},
+			NOW()
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateUserByMap" parameterType="User" >
+		UPDATE t_user 
+		<set>
+			<if test="user_name != null">
+				user_name = #{user_name}
+			</if>
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+	
+	<!-- 批量更新 -->
+	<update id="updateUsersByUsers" parameterType="list" >
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+			UPDATE t_user
+			<set>
+				<if test="item.score != null">
+					score = #{item.score}
+				</if>
+			</set>
+			WHERE user_name = #{item.user_name}
+		</foreach>
+	</update>
+
+	<select id="selectOneUserById" parameterType="long" resultType="User" >
+		SELECT user_name FROM t_user WHERE id = #{id}
+	</select>
+	
+	<!-- ${}是原原本本的传入，可能存在sql注入，某些场景下用到 -->
+	<select id="selectUsersByIds" parameterType="java.util.Map" resultType="User" >
+		SELECT user_name FROM t_user WHERE id in (${ids})
+	</select>
+	
+	<!-- 使用<where> 第一个不要AND后面都要AND，不管第一个有么有值都不会有问题 -->	
+	<select id="selectUsersByMap" parameterType="java.util.Map" resultType="User" >
+		SELECT user_name 
+		FROM t_user 
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+			<if test="user_name != null">
+				AND user_name = #{user_name}
+			</if>
+			<if test="birthday != null">
+				<![CDATA[AND birthday <= #{birthday}]]>
+			</if>
+		</where>
+	</select>
+	
+	<resultMap id="selectUsers4EnumResultMap" type="User">
+	  <result property="sex" column="sex" javaType="com.hqu.enums.SexEnum" typeHandler="com.hqu.enums.EnumKeyTypeHandler"/>
+	</resultMap>
+	<select id="selectUsers4Enum" resultMap="selectUsers4EnumResultMap">
+		SELECT * FROM t_user
+	</select>
+	
+	<delete id="deleteUserById">
+		DELETE FROM t_user WHERE id = #{id}
+	</delete>
+	
+</mapper>

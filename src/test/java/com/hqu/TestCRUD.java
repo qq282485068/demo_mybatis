@@ -3,20 +3,24 @@ package com.hqu;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.hqu.enums.SexEnum;
 import com.hqu.model.User;
 import com.hqu.util.MyBatisUtil;
 
 /**
  * MyBatis增删改查例子
+ * 
  * @author jerome_s@qq.com
- * @date 2015年11月27日 下午6:24:35 
+ * @date 2015年11月27日 下午6:24:35
  * @see 参考：http://blog.csdn.net/jerome_s/article/details/46340043
  * @see mybatis官方文档：http://mybatis.org/mybatis-3/zh/getting-started.html
  */
@@ -36,129 +40,90 @@ public class TestCRUD {
 	}
 
 	@Test
-	public void testInsertUser() {
-		User user = new User();
-		user.setUsername("jerome");
-		user.setSex("boy");
-		user.setAddress("深圳");
-		user.setScore(12f);
+	public void insertUserTest() {
+		User user = new User("苏志达", 26, SexEnum.MAN, new Date(), 88.323d);
 
 		int insertResult = sqlSession.insert("UserMapper.insertUser", user);
 		System.out.println("insertResult = " + insertResult);
+		System.out.println("user id = " + user.getId());
 	}
-	
+
 	@Test
-	public void testInsertUsers() {
+	public void insertUsersTest() {
 		List<User> users = new ArrayList<>();
-		
-		User user1 = new User();
-		user1.setUsername("jerome1");
-		user1.setSex("boy");
-		user1.setAddress("深圳");
-		user1.setScore(12f);
-		
-		User user2 = new User();
-		user2.setUsername("jerome2");
-		user2.setSex("boy");
-		user2.setAddress("深圳");
-		user2.setScore(12f);
-		
-		users.add(user1);
-		users.add(user2);
-		
+		users.add(new User("jerome", 26, SexEnum.MAN, new Date(), 99.3d));
+		users.add(new User("jelly", 25, SexEnum.WOMAN, new Date(), 88.2d));
+
 		int insertResult = sqlSession.insert("UserMapper.insertUsers", users);
 		System.out.println("insertResult = " + insertResult);
 	}
-	
+
 	@Test
-	public void testInsertUsersMax() {
+	public void updateUserByMap() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", 1);
+		map.put("user_name", "jerome100");
+
+		int updateResult = sqlSession.update("UserMapper.updateUserByMap", map);
+		System.out.println("updateResult = " + updateResult);
+	}
+	
+	/**
+	 * 批量更新 需要在数据库连接url追加 &allowMultiQueries=true 表示 可以允许一次执行多条sql(通过分号分割)
+	 * 
+	 * @author jerome_s@qq.com
+	 */
+	@Test
+	public void updateUsersByUsers() {
 		List<User> users = new ArrayList<>();
-		User user = null;
-		for(int i = 0; i<100000; i ++){
-			user = new User();
-			user.setUsername("jerome" + i);
-			user.setSex("boy");
-			user.setAddress("深圳");
-			user.setScore(i);
-			users.add(user);
-		}
+		users.add(new User("jerome", 26, SexEnum.MAN, new Date(), 80.3d));
+		users.add(new User("jelly", 25, SexEnum.WOMAN, new Date(), 80.2d));
 		
-		System.out.println("start insert ... ");
-		long currtTime = new Date().getTime();
-		int insertResult = sqlSession.insert("UserMapper.insertUsers", users);
-		System.out.println("insertResult = " + insertResult);
-		System.out.println("use time = " + (new Date().getTime() - currtTime));
+		int updatesResult = sqlSession.update("UserMapper.updateUsersByUsers", users);
+		System.out.println("updatesResult = " + updatesResult);
 	}
 	
 	@Test
-	public void testDeleteUserById() {
+	public void deleteUserByIdTest() {
 		int deleteResult = sqlSession.delete("UserMapper.deleteUserById", 2);
 		System.out.println("deleteResult = " + deleteResult);
 	}
 	
 	@Test
-	public void testUpdateUserById() {
-		
-		User user = new User();
-		user.setId(2);
-		user.setUsername("jerome");
-		user.setSex("boy1");
-		user.setAddress("深圳");
-		user.setScore(12f);
-		
-		int updateResult = sqlSession.update("UserMapper.testUpdateUserById", user);
-		System.out.println("deleteResult = " + updateResult);
-	}
-	
-	/**
-	 * 批量更新 需要在数据库连接url追加 &allowMultiQueries=true
-	 * 表示 可以允许一次执行多条sql(通过分号分割)
-	 * @author jerome_s@qq.com
-	 */
-	@Test
-	public void testUpdateUsersById() {
-		List<User> users = new ArrayList<>();
-		
-		User user1 = new User();
-		user1.setId(5);
-		user1.setUsername("jerome1");
-		user1.setSex("boy");
-		user1.setAddress("深圳");
-		user1.setScore(12f);
-		
-		User user2 = new User();
-		user2.setId(6);
-		user2.setUsername("jerome2");
-		user2.setSex("boy");
-		user2.setAddress("深圳");
-		user2.setScore(12f);
-		
-		users.add(user1);
-		users.add(user2);
-		
-		int updatesResult = sqlSession.update("UserMapper.testUpdateUsersById", users);
-		System.out.println("updatesResult = " + updatesResult);
+	public void selectOneUserByIdTest() {
+		User user = sqlSession.selectOne("UserMapper.selectOneUserById", 1l);
+		System.out.println("user = " + user.toString());
 	}
 	
 	@Test
-	public void testSelectOne() {
-		// 通过sqlSession操作数据库
-		// 第一个参数: test是userMapper.xml的命名控件; findUserByNameuserMapper.xml定义的statement的id
-		// 第二个参数: 输入参数
-		User user1 = new User();
-		user1.setUsername("jerome1");
-		User user = sqlSession.selectOne("UserMapper.findUserByName", user1);
-		System.out.println("user = " + user);
-	}
-	
-	@Test
-	public void testSelectList() {
-		User user1 = new User();
-		user1.setUsername("jerome1");
-		List<User> users = sqlSession.selectList("UserMapper.findUserByName", user1);
-		for (User user : users) {
-			System.out.println("user.toString() = " + user.toString());
+	public void selectUsersByIdsTest() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("ids", "1,2,3,4");
+		
+		List<User> users = sqlSession.selectList("UserMapper.selectUsersByIds", map);
+		for (User u : users) {
+			System.out.println(u.toString());
 		}
 	}
 	
+	@Test
+	public void selectUsersByMapTest() {
+		Map<String, Object> map = new HashMap<>();
+		// map.put("id", "1");
+		map.put("user_name", "jerome");
+		
+		List<User> users = sqlSession.selectList("UserMapper.selectUsersByMap", map);
+		for (User u : users) {
+			System.out.println(u.toString());
+		}
+	}
+	
+	@Test
+	public void selectUsers4EnumTest() {
+		List<User> users = sqlSession.selectList("UserMapper.selectUsers4Enum");
+		for (User u : users) {
+			System.out.println(u.toString());
+		}
+	}
+
 }
