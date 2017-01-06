@@ -82,7 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- ${}是原原本本的传入，可能存在sql注入，某些场景下用到 -->
 	<select id="selectUsersByIds" parameterType="java.util.Map" resultType="User" >
-		SELECT user_name FROM t_user WHERE id in (${ids})
+		SELECT user_name FROM t_user WHERE id IN 
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+       		#{item}  
+   		</foreach>
+        <!-- (${ids}) -->
 	</select>
 	
 	<!-- 使用<where> 第一个不要AND后面都要AND，不管第一个有么有值都不会有问题 -->	

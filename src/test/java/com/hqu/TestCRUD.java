@@ -98,7 +98,8 @@ public class TestCRUD {
 	@Test
 	public void selectUsersByIdsTest() {
 		Map<String, Object> map = new HashMap<>();
-		map.put("ids", "1,2,3,4");
+		String ids = "1,2,3,4";
+		map.put("ids", ids.split(",")); // 传入数组，防止mapper$的SQL注入攻击
 		
 		List<User> users = sqlSession.selectList("UserMapper.selectUsersByIds", map);
 		for (User u : users) {
