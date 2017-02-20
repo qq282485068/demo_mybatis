@@ -117,4 +117,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		DELETE FROM t_user WHERE id = #{id}
 	</delete>
 	
+	<!-- 调用节存储过程 -->
+	<parameterMap type="map" id="callProcedureTestMap">  
+	   <parameter property="p_user_id" jdbcType="NUMERIC" javaType="java.lang.Long" mode="IN"/>  
+	   <parameter property="p_result" jdbcType="NUMERIC" javaType="java.lang.Integer" mode="OUT"/>  
+	</parameterMap>
+	<select id="callProcedureTest" parameterMap="callProcedureTestMap" statementType="CALLABLE" resultType="Integer">
+		{call p_test(?,?)}
+	</select>
+	
 </mapper>

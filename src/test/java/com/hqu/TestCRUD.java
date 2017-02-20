@@ -127,4 +127,22 @@ public class TestCRUD {
 		}
 	}
 
+	/**
+	 * 调用存储过程
+	 * 
+	 * @author jerome_s@qq.com
+	 */
+	@Test
+	public void callProcedureTest() {
+		// sql脚本 p_test.sql
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("p_user_id", 1L);
+		sqlSession.selectOne("UserMapper.callProcedureTest", map);
+		
+		// 取得存储过程的返回值
+		System.out.println("p_result = " + map.get("p_result"));
+		
+	}
+
 }
